@@ -7,7 +7,7 @@ namespace RoaveTest\PsrContainerDoctrine;
 use Doctrine\Common\Annotations\PsrCachedReader;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\Mapping\Driver;
-use Doctrine\Persistence\Mapping\Driver\AnnotationDriver as AbstractAnnotationDriver;
+use Doctrine\ORM\Mapping\Driver\AnnotationDriver as AbstractAnnotationDriver;
 use Doctrine\Persistence\Mapping\Driver\FileDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use PHPUnit\Framework\TestCase;

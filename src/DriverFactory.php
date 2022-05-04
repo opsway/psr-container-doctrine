@@ -10,8 +10,8 @@ use Doctrine\Common\Annotations\PsrCachedReader;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\Psr6\CacheAdapter;
+use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
-use Doctrine\Persistence\Mapping\Driver\AnnotationDriver;
 use Doctrine\Persistence\Mapping\Driver\FileDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
@@ -49,7 +49,11 @@ final class DriverFactory extends AbstractFactory
         if (
             $config['class'] !== AttributeDriver::class
             && ! is_subclass_of($config['class'], AttributeDriver::class)
-            && is_subclass_of($config['class'], AnnotationDriver::class)
+            && ($config['class'] === AnnotationDriver::class
+                || is_subclass_of(
+                    $config['class'],
+                    \Doctrine\Persistence\Mapping\Driver\AnnotationDriver::class
+                ))
         ) {
             $this->registerAnnotationLoader();
 
