@@ -15,8 +15,6 @@ use Roave\PsrContainerDoctrine\AbstractFactory;
 use Roave\PsrContainerDoctrine\CacheFactory;
 use Roave\PsrContainerDoctrine\Exception\OutOfBoundsException;
 
-use function extension_loaded;
-
 /**
  * @coversDefaultClass \Roave\PsrContainerDoctrine\CacheFactory
  */
@@ -33,87 +31,6 @@ final class CacheFactoryTest extends TestCase
     /**
      * @covers ::createWithConfig
      */
-    public function testFileSystemCacheConstructor(): void
-    {
-        $container = $this->createContainerMockWithConfig(
-            [
-                'doctrine' => [
-                    'cache' => [
-                        'filesystem' => [
-                            'class' => FilesystemCache::class,
-                            'directory' => 'test',
-                        ],
-                    ],
-                ],
-            ]
-        );
-
-        $factory       = new CacheFactory('filesystem');
-        $cacheInstance = $factory($container);
-
-        self::assertInstanceOf(FilesystemCache::class, $cacheInstance);
-    }
-
-    public function testCacheChainContainsInitializedProviders(): void
-    {
-        $config = [
-            'doctrine' => [
-                'cache' => [
-                    'chain' => [
-                        'class'     => ChainCache::class,
-                        'providers' => ['array', 'array'],
-                    ],
-                ],
-            ],
-        ];
-
-        $container = $this->createMock(ContainerInterface::class);
-        $container->method('has')
-            ->withConsecutive(['config'], ['config'], [ArrayCache::class], ['config'], [ArrayCache::class])
-            ->willReturnOnConsecutiveCalls(true, true, false, true, false);
-        $container->method('get')->with('config')->willReturn($config);
-
-        $factory       = new CacheFactory('chain');
-        $cacheInstance = $factory($container);
-
-        self::assertInstanceOf(ChainCache::class, $cacheInstance);
-    }
-
-    public function testCanInjectWrappedInstances(): void
-    {
-        if (! extension_loaded('memcached')) {
-            $this->markTestSkipped('Extension memcached is not loaded');
-        }
-
-        /** @psalm-suppress ArgumentTypeCoercion \Memcached needs to be imported otherwise */
-        $wrappedMemcached = $this->createMock('Memcached');
-
-        $config = [
-            'doctrine' => [
-                'cache' => [
-                    'memcached' => [
-                        'class'     => MemcachedCache::class,
-                        'instance'  => $wrappedMemcached,
-                        'namespace' => 'foo',
-                    ],
-                ],
-            ],
-        ];
-
-        $container = $this->createMock(ContainerInterface::class);
-        $container->method('has')
-            ->withConsecutive(['config'], [MemcachedCache::class])
-            ->willReturnOnConsecutiveCalls(true, false);
-        $container->expects($this->once())->method('get')->with('config')->willReturn($config);
-
-        $factory  = new CacheFactory('memcached');
-        $instance = $factory($container);
-
-        self::assertInstanceOf(MemcachedCache::class, $instance);
-        self::assertSame($wrappedMemcached, $instance->getMemcached());
-        self::assertSame('foo', $instance->getNamespace());
-    }
-
     public function testThrowsForMissingConfigKey(): void
     {
         $container = $this->createContainerMockWithConfig(

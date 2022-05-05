@@ -49,11 +49,7 @@ final class DriverFactory extends AbstractFactory
         if (
             $config['class'] !== AttributeDriver::class
             && ! is_subclass_of($config['class'], AttributeDriver::class)
-            && ($config['class'] === AnnotationDriver::class
-                || is_subclass_of(
-                    $config['class'],
-                    \Doctrine\Persistence\Mapping\Driver\AnnotationDriver::class
-                ))
+            && $config['class'] === AnnotationDriver::class
         ) {
             $this->registerAnnotationLoader();
 
