@@ -52,57 +52,65 @@ final class ConfigurationFactory extends AbstractFactory
             $configuration->addFilter($name, $className);
         }
 
-        $metadataCache = $this->retrieveDependency(
-            $container,
-            $config['metadata_cache'],
-            'cache',
-            CacheFactory::class
-        );
+        if (isset($config['metadata_cache'])) {
+            $metadataCache = $this->retrieveDependency(
+                $container,
+                $config['metadata_cache'],
+                'cache',
+                CacheFactory::class
+            );
 
-        $this->processCacheImplementation(
-            $configuration,
-            $metadataCache,
-            [$configuration, 'setMetadataCache']
-        );
+            $this->processCacheImplementation(
+                $configuration,
+                $metadataCache,
+                $configuration->setMetadataCache(...),
+            );
+        }
 
-        $queryCache = $this->retrieveDependency(
-            $container,
-            $config['query_cache'],
-            'cache',
-            CacheFactory::class
-        );
+        if (isset($config['query_cache'])) {
+            $queryCache = $this->retrieveDependency(
+                $container,
+                $config['query_cache'],
+                'cache',
+                CacheFactory::class
+            );
 
-        $this->processCacheImplementation(
-            $configuration,
-            $queryCache,
-            [$configuration, 'setQueryCache']
-        );
+            $this->processCacheImplementation(
+                $configuration,
+                $queryCache,
+                $configuration->setQueryCache(...),
+            );
+        }
 
-        $resultCache = $this->retrieveDependency(
-            $container,
-            $config['result_cache'],
-            'cache',
-            CacheFactory::class
-        );
+        if (isset($config['result_cache'])) {
+            $resultCache = $this->retrieveDependency(
+                $container,
+                $config['result_cache'],
+                'cache',
+                CacheFactory::class
+            );
 
-        $this->processCacheImplementation(
-            $configuration,
-            $resultCache,
-            [$configuration, 'setResultCache']
-        );
+            $this->processCacheImplementation(
+                $configuration,
+                $resultCache,
+                $configuration->setResultCache(...),
+            );
+        }
 
-        $hydrationCache = $this->retrieveDependency(
-            $container,
-            $config['hydration_cache'],
-            'cache',
-            CacheFactory::class
-        );
+        if (isset($config['hydration_cache'])) {
+            $hydrationCache = $this->retrieveDependency(
+                $container,
+                $config['hydration_cache'],
+                'cache',
+                CacheFactory::class
+            );
 
-        $this->processCacheImplementation(
-            $configuration,
-            $hydrationCache,
-            [$configuration, 'setHydrationCache'],
-        );
+            $this->processCacheImplementation(
+                $configuration,
+                $hydrationCache,
+                $configuration->setHydrationCache(...),
+            );
+        }
 
         $configuration->setMetadataDriverImpl($this->retrieveDependency(
             $container,
@@ -139,7 +147,8 @@ final class ConfigurationFactory extends AbstractFactory
             $configuration->setDefaultRepositoryClassName($config['default_repository_class_name']);
         }
 
-        if ($config['second_level_cache']['enabled']) {
+        $resultCache = $configuration->getResultCache();
+        if ($config['second_level_cache']['enabled'] && $resultCache) {
             $regionsConfig = new RegionsConfiguration(
                 $config['second_level_cache']['default_lifetime'],
                 $config['second_level_cache']['default_lock_lifetime']
@@ -193,10 +202,10 @@ final class ConfigurationFactory extends AbstractFactory
     protected function getDefaultConfig(string $configKey): array
     {
         return [
-            'metadata_cache' => 'array',
-            'query_cache' => 'array',
-            'result_cache' => 'array',
-            'hydration_cache' => 'array',
+            'metadata_cache' => null,
+            'query_cache' => null,
+            'result_cache' => null,
+            'hydration_cache' => null,
             'driver' => $configKey,
             'auto_generate_proxy_classes' => true,
             'proxy_dir' => 'data/cache/DoctrineEntityProxy',
