@@ -10,8 +10,7 @@ use Doctrine\Common\Annotations\PsrCachedReader;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\Psr6\CacheAdapter;
-use Doctrine\ORM\Mapping\Driver\AttributeDriver;
-use Doctrine\Persistence\Mapping\Driver\AnnotationDriver;
+use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\Persistence\Mapping\Driver\FileDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
@@ -21,6 +20,7 @@ use Roave\PsrContainerDoctrine\Exception\InvalidArgumentException;
 use Roave\PsrContainerDoctrine\Exception\OutOfBoundsException;
 
 use function array_key_exists;
+use function is_a;
 use function is_array;
 use function is_subclass_of;
 
@@ -46,11 +46,7 @@ final class DriverFactory extends AbstractFactory
             $config['paths'] = [$config['paths']];
         }
 
-        if (
-            $config['class'] !== AttributeDriver::class
-            && ! is_subclass_of($config['class'], AttributeDriver::class)
-            && is_subclass_of($config['class'], AnnotationDriver::class)
-        ) {
+        if (is_a($config['class'], AnnotationDriver::class, true)) {
             $this->registerAnnotationLoader();
 
             /**

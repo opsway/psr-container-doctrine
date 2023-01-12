@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace RoaveTest\PsrContainerDoctrine;
 
 use Doctrine\Common\Annotations\PsrCachedReader;
-use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\Mapping\Driver;
-use Doctrine\Persistence\Mapping\Driver\AnnotationDriver as AbstractAnnotationDriver;
+use Doctrine\ORM\Mapping\Driver\CompatibilityAnnotationDriver;
 use Doctrine\Persistence\Mapping\Driver\FileDriver;
 use Doctrine\Persistence\Mapping\Driver\MappingDriverChain;
 use PHPUnit\Framework\TestCase;
@@ -15,6 +14,7 @@ use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
 use Roave\PsrContainerDoctrine\DriverFactory;
 use Roave\PsrContainerDoctrine\Exception\OutOfBoundsException;
+use RoaveTest\PsrContainerDoctrine\TestAsset\StubCache;
 
 final class DriverFactoryTest extends TestCase
 {
@@ -137,7 +137,7 @@ final class DriverFactoryTest extends TestCase
     /**
      * @return string[][]
      *
-     * @psalm-return list<array{class-string<AbstractAnnotationDriver>}>
+     * @psalm-return list<array{class-string<CompatibilityAnnotationDriver>}>
      */
     public function annotationDriverClassProvider(): array
     {
@@ -148,7 +148,7 @@ final class DriverFactoryTest extends TestCase
     }
 
     /**
-     * @psalm-param class-string<AbstractAnnotationDriver> $driverClass
+     * @psalm-param class-string<CompatibilityAnnotationDriver> $driverClass
      * @dataProvider annotationDriverClassProvider
      */
     public function testItSupportsAnnotationDrivers(string $driverClass): void
@@ -164,7 +164,7 @@ final class DriverFactoryTest extends TestCase
                     ],
                 ],
             ],
-            'doctrine.cache.default' => new ArrayCache(),
+            'doctrine.cache.default' => new StubCache(),
         ];
         $container = $this->createMock(ContainerInterface::class);
         $container->method('has')->willReturnCallback(
