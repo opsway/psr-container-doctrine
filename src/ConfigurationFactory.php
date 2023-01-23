@@ -143,6 +143,12 @@ final class ConfigurationFactory extends AbstractFactory
             $configuration->setEntityListenerResolver($config['entity_listener_resolver']);
         }
 
+        if (is_string($config['schema_assets_filter'])) {
+            $configuration->setSchemaAssetsFilter($container->get($config['schema_assets_filter']));
+        } elseif ($config['schema_assets_filter'] !== null) {
+            $configuration->setSchemaAssetsFilter($config['schema_assets_filter']);
+        }
+
         if ($config['default_repository_class_name'] !== null) {
             $configuration->setDefaultRepositoryClassName($config['default_repository_class_name']);
         }
@@ -220,6 +226,7 @@ final class ConfigurationFactory extends AbstractFactory
             'custom_hydration_modes' => [],
             'naming_strategy' => null,
             'quote_strategy' => null,
+            'schema_assets_filter' => null,
             'default_repository_class_name' => null,
             'repository_factory' => null,
             'class_metadata_factory_name' => null,
