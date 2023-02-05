@@ -41,5 +41,17 @@
                 <referencedMethod name="Doctrine\DBAL\Connection::getEventManager"/>
             </errorLevel>
         </DeprecatedMethod>
+        <UndefinedClass>
+            <errorLevel type="suppress">
+                <referencedClass name="Doctrine\Common\Cache\Cache"/>
+                <referencedClass name="Doctrine\Common\Cache\CacheProvider"/>
+                <referencedClass name="Doctrine\Common\Cache\Psr6\CacheAdapter"/>
+            </errorLevel>
+        </UndefinedClass>
+        <UndefinedDocblockClass>
+            <errorLevel type="suppress">
+                <referencedClass name="Doctrine\Common\Cache\Cache"/>
+            </errorLevel>
+        </UndefinedDocblockClass>
     </issueHandlers>
 </psalm>
